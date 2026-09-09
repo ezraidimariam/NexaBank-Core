@@ -1,5 +1,6 @@
 package model;
 
+import exception.BankException;
 import java.util.HashSet;
 
 public class CompteBancaire {

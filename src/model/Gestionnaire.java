@@ -1,5 +1,6 @@
 package model;
 
+import exception.BankException;
 import utils.FileLogger;
 
 public class Gestionnaire extends Utilisateur {
@@ -37,3 +38,4 @@ public class Gestionnaire extends Utilisateur {
     }
 
     public String getIdGestionnaire() { return idGestionnaire; }
+}
