@@ -18,6 +18,8 @@ public abstract class Utilisateur {
     }
 
     public void logout() {
-        System.out.println("Déconnexion réussie.");
+        System.out.println("Déconnexion réussie pour : " + nom + " " + prenom);
     }
+
+    public String getNom() { return nom; }
 }

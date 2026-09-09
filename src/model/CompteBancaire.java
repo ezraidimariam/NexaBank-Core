@@ -1,43 +1,53 @@
 package model;
 
-import exception.BankException;
 import java.util.HashSet;
 
 public class CompteBancaire {
-    private String numeroCompte;
+    private final String numeroCompte;
+    private final String typeCompte;
     private double solde;
-    private String typeCompte;
-    private HashSet<Transaction> historiqueTransactions;
+    private final HashSet<Transaction> historiqueTransactions;
 
-    public CompteBancaire(String numeroCompte, double solde, String typeCompte) throws BankException {
-        if (solde < 0) {
-            throw new BankException("Le solde initial ne peut pas être négatif.");
-        }
+    public CompteBancaire(String numeroCompte, double solde, String typeCompte) {
         this.numeroCompte = numeroCompte;
-        this.solde = solde;
         this.typeCompte = typeCompte;
+        if (solde >= 0) {
+            this.solde = solde;
+        } else {
+            this.solde = 0;
+            System.out.println("Le solde initial ne peut pas être négatif. Mis à 0 par défaut.");
+        }
         this.historiqueTransactions = new HashSet<>();
     }
 
-    public void retirer(double montant) throws BankException {
-        if (montant <= 0) {
-            throw new BankException("Le montant du retrait doit être positif.");
+    public void retirer(double montant) {
+        if (montant > 0 && montant <= solde) {
+            this.solde -= montant;
+            ajouterTransaction(new Transaction("RETRAIT", montant));
+        } else {
+            System.out.println("Opération impossible: montant invalide ou solde insuffisant.");
         }
-        if (montant > solde) {
-            throw new BankException("Solde insuffisant.");
-        }
-        this.solde -= montant;
     }
 
-    public void deposer(double montant) throws BankException {
-        if (montant <= 0) {
-            throw new BankException("Le montant du dépôt doit être positif.");
+    public void deposer(double montant) {
+        if (montant > 0) {
+            this.solde += montant;
+            ajouterTransaction(new Transaction("DEPOT", montant));
+        } else {
+            System.out.println("Le montant du dépôt doit être positif.");
         }
-        this.solde += montant;
     }
 
     public void ajouterTransaction(Transaction t) {
         this.historiqueTransactions.add(t);
+    }
+
+    public void afficherHistorique() {
+        System.out.println("Historique du compte " + numeroCompte + ":");
+        for (Transaction t : historiqueTransactions) {
+            // استدعينا Getters باش تحيد Warning ويبقى الكود منظم
+            System.out.println(" - " + t.getType() + " de " + t.getMontant() + " DH (Date: " + t.getDate() + ")");
+        }
     }
 
     public String getNumeroCompte() { return numeroCompte; }

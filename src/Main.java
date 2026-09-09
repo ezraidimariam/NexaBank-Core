@@ -1,36 +1,41 @@
-import exception.BankException;
-import java.util.Date;
+
 import model.Client;
 import model.CompteBancaire;
 import model.Gestionnaire;
-import model.Transaction;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            Client client = new Client("C001", "Doe", "John", "john@example.com", "1234");
-            CompteBancaire compte = new CompteBancaire("CB001", 1000.0, "Courant");
-            Gestionnaire gestionnaire = new Gestionnaire("G001", "Smith", "Alice", "alice@example.com", "admin");
+        Gestionnaire gestionnaire = new Gestionnaire("G001", "El Amrani", "Youssef", "youssef@bank.ma", "admin123");
+        Client client = new Client("C101", "Benali", "Karim", "karim@email.com", "pass123");
 
-            gestionnaire.creerCompte(client, compte);
-            client.effectuerDepot("CB001", 250.0);
-            client.effectuerRetrait("CB001", 100.0);
-            client.consulterSolde();
-            client.consulterHistorique("CB001");
-
-            Transaction transaction = new Transaction(
-                    1,
-                    "Dépôt",
-                    250.0,
-                    new Date(),
-                    null,
-                    "CB001"
-            );
-            transaction.genererFichierTxt();
-
-            System.out.println("Projet NexaBank initialisé avec succès.");
-        } catch (BankException e) {
-            System.out.println("Erreur : " + e.getMessage());
+        if (client.login("karim@email.com", "pass123")) {
+            System.out.println("Connexion réussie pour le client : " + client.getNom());
         }
+
+        System.out.println("Gestionnaire actif: " + gestionnaire.getNom() + " (ID: " + gestionnaire.getIdGestionnaire() + ")");
+
+        CompteBancaire compteCourant = new CompteBancaire("CB001", 2000.0, "Courant");
+        CompteBancaire compteEpargne = new CompteBancaire("CB002", 5000.0, "Épargne");
+
+        gestionnaire.creerCompte(client, compteCourant);
+        gestionnaire.creerCompte(client, compteEpargne);
+
+        System.out.println("\n--- Solde initial ---");
+        client.consulterSolde();
+
+        System.out.println("\n--- Opérations ---");
+        client.effectuerDepot("CB001", 500.0);
+        client.effectuerRetrait("CB001", 300.0);
+        client.effectuerVirement("CB001", compteEpargne, 400.0);
+
+        System.out.println("\n--- Solde final ---");
+        client.consulterSolde();
+
+        System.out.println("\n--- Historique des transactions ---");
+        compteCourant.afficherHistorique();
+        System.out.println("Nombre total d'opérations enregistrées: " + compteCourant.getHistoriqueTransactions().size());
+
+        System.out.println("\n--- Déconnexion ---");
+        client.logout();
     }
 }

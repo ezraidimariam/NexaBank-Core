@@ -1,38 +1,24 @@
 package model;
 
-import exception.BankException;
-import utils.FileLogger;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Transaction {
-    private int id_transaction;
-    private String type;
-    private double montant;
-    private Date date;
-    private String compteSource;
-    private String compteDestination;
+    private final String type;
+    private final double montant;
+    private final LocalDateTime date;
 
-    public Transaction(int id_transaction, String type, double montant, Date date, String compteSource, String compteDestination) {
-        this.id_transaction = id_transaction;
+    public Transaction(String type, double montant) {
         this.type = type;
         this.montant = montant;
-        this.date = date;
-        this.compteSource = compteSource;
-        this.compteDestination = compteDestination;
+        this.date = LocalDateTime.now();
     }
 
-    public void genererFichierTxt() {
-        try {
-            FileLogger.enregistrerTransaction(compteSource != null ? compteSource : compteDestination, this);
-        } catch (BankException e) {
-            System.out.println("Erreur génération TXT : " + e.getMessage());
-        }
-    }
-
-    public int getId_transaction() { return id_transaction; }
     public String getType() { return type; }
     public double getMontant() { return montant; }
-    public Date getDate() { return date; }
-    public String getCompteSource() { return compteSource; }
-    public String getCompteDestination() { return compteDestination; }
+    public LocalDateTime getDate() { return date; }
+
+    @Override
+    public String toString() {
+        return type + " de " + montant + " DH le " + date.getDayOfMonth() + "/" + date.getMonthValue();
+    }
 }
