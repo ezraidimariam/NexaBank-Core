@@ -14,7 +14,9 @@ public class Main {
 
             gestionnaire.creerCompte(client, compte);
             client.effectuerDepot("CB001", 250.0);
+            client.effectuerRetrait("CB001", 100.0);
             client.consulterSolde();
+            client.consulterHistorique("CB001");
 
             Transaction transaction = new Transaction(
                     1,
