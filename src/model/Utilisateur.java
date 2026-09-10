@@ -22,4 +22,7 @@ public abstract class Utilisateur {
     }
 
     public String getNom() { return nom; }
+    public String getPrenom() { return prenom; }
+    public String getEmail() { return email; }
+    public String getMotDePasse() { return motDePasse; }
 }
