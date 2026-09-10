@@ -1,39 +1,43 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Transaction {
     private String idTransaction;
-    private String type;
+    private String type; // Dépôt, Retrait, Virement
     private double montant;
     private LocalDate date;
     private String compteSource;
     private String compteDestination;
 
-    // Constructeur complet
-    public Transaction(String idTransaction, String type, double montant, LocalDate date, String compteSource, String compteDestination) {
-        this.idTransaction = idTransaction;
-        this.type = type;
-        this.montant = montant;
-        this.date = date;
-        this.compteSource = compteSource;
-        this.compteDestination = compteDestination;
-    }
-
-    // Constructeur simple pour faciliter l'utilisation dans Client
-    public Transaction(String type, double montant) {
-        this.idTransaction = "TX" + (int)(Math.random() * 1000);
+    public Transaction(String type, double montant, String compteSource, String compteDestination) {
+        this.idTransaction = "TX-" + UUID.randomUUID().toString().substring(0, 8);
         this.type = type;
         this.montant = montant;
         this.date = LocalDate.now();
-        this.compteSource = "N/A";
-        this.compteDestination = "N/A";
+        this.compteSource = compteSource;
+        this.compteDestination = compteDestination;
     }
 
     public String formatFichier() {
         String src = (compteSource != null) ? compteSource : "null";
         String dest = (compteDestination != null) ? compteDestination : "null";
         return src + " | " + dest + " | " + date + " | " + type + " | " + montant + " €";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Objects.equals(idTransaction, that.idTransaction);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idTransaction);
     }
 
     public String getIdTransaction() { return idTransaction; }

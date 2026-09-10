@@ -1,5 +1,10 @@
 package model;
 
+import exception.CompteInexistantException;
+import exception.FichierException;
+import exception.MontantNegatifException;
+import exception.SoldeInsuffisantException;
+
 import java.util.HashMap;
 
 public class Client extends Utilisateur {
@@ -15,49 +20,29 @@ public class Client extends Utilisateur {
     public void consulterSolde() {
         System.out.println("Comptes de " + nom + " " + prenom + " :");
         if (comptes.isEmpty()) {
-            System.out.println("Aucun compte associé.");
+            System.out.println("Aucun compte trouve.");
         } else {
             for (CompteBancaire compte : comptes.values()) {
-                System.out.println(" - Compte N° " + compte.getNumeroCompte() + " (" + compte.getTypeCompte() + ") : " + compte.getSolde() + " DH");
+                System.out.println(" - Compte N: " + compte.getNumeroCompte() + " (" + compte.getTypeCompte() + ") : " + compte.getSolde() + " DH");
             }
         }
     }
 
-    public void effectuerDepot(String numeroCompte, double montant) {
-        CompteBancaire compte = comptes.get(numeroCompte);
-        if (compte != null) {
-            compte.deposer(montant);
-            System.out.println("Dépôt de " + montant + " DH effectué sur le compte " + numeroCompte);
-        } else {
-            System.out.println("Compte introuvable.");
-        }
-    }
+    public void virement(String numSource, CompteBancaire compteDest, double montant)
+            throws CompteInexistantException, MontantNegatifException, SoldeInsuffisantException, FichierException {
 
-    public void effectuerRetrait(String numeroCompte, double montant) {
-        CompteBancaire compte = comptes.get(numeroCompte);
-        if (compte != null) {
-            compte.retirer(montant);
-            System.out.println("Retrait de " + montant + " DH effectué sur le compte " + numeroCompte);
-        } else {
-            System.out.println("Compte introuvable.");
-        }
-    }
-
-    public void effectuerVirement(String numSource, CompteBancaire compteDest, double montant) {
         CompteBancaire source = comptes.get(numSource);
-        if (source != null && compteDest != null) {
-            if (source.getSolde() >= montant) {
-                source.retirer(montant);
-                compteDest.deposer(montant);
-                source.ajouterTransaction(new Transaction("VIREMENT_SORTANT", montant));
-                compteDest.ajouterTransaction(new Transaction("VIREMENT_ENTRANT", montant));
-                System.out.println("Virement de " + montant + " DH effectué avec succès.");
-            } else {
-                System.out.println("Solde insuffisant pour le virement.");
-            }
-        } else {
-            System.out.println("Compte source ou destination introuvable.");
+
+        if (source == null || compteDest == null) {
+            throw new CompteInexistantException("Compte introuvable");
         }
+
+        source.retirer(montant);
+        compteDest.deposer(montant);
+
+        Transaction t = new Transaction("Virement", montant, source.getNumeroCompte(), compteDest.getNumeroCompte());
+        source.getHistoriqueTransactions().add(t);
+        compteDest.getHistoriqueTransactions().add(t);
     }
 
     public String getIdClient() { return idClient; }
