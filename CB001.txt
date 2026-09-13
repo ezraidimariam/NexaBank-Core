@@ -1,0 +1,3 @@
+CB001 | null | 2026-09-10 | Depot | 500.0 €
+CB001 | null | 2026-09-10 | Retrait | 300.0 €
+CB001 | null | 2026-09-10 | Retrait | 400.0 €

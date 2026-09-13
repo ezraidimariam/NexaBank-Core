@@ -1,6 +1,5 @@
-import model.Client;
-import model.CompteBancaire;
-import model.Gestionnaire;
+import model.*;
+import exception.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,8 +13,8 @@ public class Main {
         }
 
         System.out.println("\n=== TEST GESTIONNAIRE : CRÉATION DE COMPTES ===");
-        CompteBancaire compteCourant = new CompteBancaire("CB001", 2000.0, "Courant");
-        CompteBancaire compteEpargne = new CompteBancaire("CB002", 5000.0, "Épargne");
+        Compte compteCourant = new Compte("CB001", 2000.0, "Courant");
+        Compte compteEpargne = new Compte("CB002", 5000.0, "Épargne");
 
         gestionnaire.creerCompte(client, compteCourant);
         gestionnaire.creerCompte(client, compteEpargne);
@@ -24,22 +23,31 @@ public class Main {
         client.consulterSolde();
 
         System.out.println("\n=== TEST CLIENT : OPÉRATIONS BANCAIRES ===");
-        client.effectuerDepot("CB001", 500.0);
-        client.effectuerRetrait("CB001", 300.0);
-        client.effectuerVirement("CB001", compteEpargne, 400.0);
+        try {
+            compteCourant.deposer(500.0);
+            compteCourant.retirer(300.0);
+            client.virement("CB001", compteEpargne, 400.0);
+        } catch (MontantNegatifException | SoldeInsuffisantException | CompteInexistantException | FichierException e) {
+            System.err.println("Erreur : " + e.getMessage());
+        }
 
         System.out.println("\n=== CONSULTATION DU SOLDE FINAL ===");
         client.consulterSolde();
 
-        System.out.println("\n=== HISTORIQUE DES TRANSACTIONS (COMPTE COURANT) ===");
-        compteCourant.afficherHistorique();
+        System.out.println("\n=== HISTORIQUE ET RELEVÉ DU FICHIER TXT ===");
+        try {
+            compteCourant.afficherReleveDepuisFichier();
+        } catch (FichierException e) {
+            System.err.println("Erreur : " + e.getMessage());
+        }
 
         System.out.println("\n=== TEST GESTIONNAIRE : CLÔTURE DE COMPTE ===");
-        gestionnaire.cloturerCompte(client, "CB002");
-        client.consulterSolde();
+        try {
+            gestionnaire.cloturerCompte(client, "CB002");
+        } catch (CompteInexistantException e) {
+            System.err.println("Erreur : " + e.getMessage());
+        }
 
-        System.out.println("\n=== DÉCONNEXION ===");
-        client.logout();
-        gestionnaire.logout();
+        client.consulterSolde();
     }
 }
