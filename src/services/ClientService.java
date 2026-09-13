@@ -5,9 +5,8 @@ import model.Personne;
 import java.util.ArrayList;
 
 public class ClientService {
-    private ArrayList<Personne> clientsDb = LoginService.users;
+    private ArrayList<Personne> clientsDb = AuthService.users;
 
-    // عرض جميع العملاء
     public void afficherClients() {
         for (Personne p : clientsDb) {
             if (p instanceof Client) {
@@ -20,7 +19,6 @@ public class ClientService {
         }
     }
 
-    // البحث عن العميل بالـ ID بأمان تام
     public Client trouverParId(String idClient) {
         for (Personne p : clientsDb) {
             if (p instanceof Client) {
@@ -30,10 +28,9 @@ public class ClientService {
                 }
             }
         }
-        return null; // إذا لم يجد العميل
+        return null;
     }
 
-    // تحديث البيانات بأمان
     public void mettreAJourInfos(String idClient, String nouveauNom, String nouveauPrenom, String nouveauEmail) {
         Client client = trouverParId(idClient);
         if (client != null) {

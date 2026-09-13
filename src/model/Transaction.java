@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public class Transaction {
+    public static int count = 1;
     private int idTransaction;
     private TypeTransaction type;
     private double montant;
@@ -20,7 +21,7 @@ public class Transaction {
     }
 
     public int getIdTransaction() { return idTransaction; }
-    public TypeTransaction getType() { return type; }
+    public TypeTransaction getTypeTransaction() { return type; }
     public double getMontant() { return montant; }
     public LocalDate getDate() { return date; }
     public String getCompteSource() { return compteSource; }
